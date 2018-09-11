@@ -17,7 +17,7 @@ public class Const {
     public static final String EMAIL = "email";
 
     /**
-     * 这里用作验证码存入session的名称
+     * 这里用作验证码存入session的属性名
      */
     public static final String SESSION_KEY_OF_RAND_CODE = "randCode";
 
