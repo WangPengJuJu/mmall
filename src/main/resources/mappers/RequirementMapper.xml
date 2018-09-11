@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mmall.dao.RequirementMapper">
+    <resultMap id="BaseResultMap" type="com.mmall.pojo.Requirement">
+        <constructor>
+            <idArg column="id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+            <arg column="phone" javaType="java.lang.String" jdbcType="VARCHAR" />
+            <arg column="requirements" javaType="java.lang.String" jdbcType="VARCHAR" />
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, phone, requirements
+    </sql>
+    <select id="getRequirementsDetailsById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from mmall_requirement
+        where id = #{requirementsId,jdbcType=INTEGER}
+    </select>
+
+    <select id="findAllRequirements"  resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from mmall_requirement
+    </select>
+    <insert id="add_requirements" parameterType="com.mmall.pojo.Requirement">
+        insert INTO mmall_requirement
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            id,
+            <if test="phone != null">
+                phone,
+            </if>
+            <if test="requirements != null">
+                requirements,
+            </if>
+        </trim>
+        <trim prefix="values(" suffix=")" suffixOverrides=",">
+            #{id,jdbcType=INTEGER},
+            <if test="phone != null">
+                #{phone,jdbcType=VARCHAR},
+            </if>
+            <if test="requirements != null">
+                #{requirements,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+
+</mapper>

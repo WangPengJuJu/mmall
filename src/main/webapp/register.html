@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+    <head lang="en">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <title>AI数据商城</title>
+        <!-- <link rel="stylesheet" href="css/bootstrap.min.css"> -->
+        <link rel="stylesheet" href="fonts/font-awesome-4.6.3/css/font-awesome.min.css">
+        <link rel="stylesheet" href="css/login.css">
+        <link rel="stylesheet" href="css/common.css">
+    </head>
+    <body>
+        <div class="login-box">
+            <div class="bg-blue">
+                <div class="outer-bg">
+                    <img class="Bottom-lines" src="./../image/Bottom_lines.png"/>
+                </div>
+                <!-- <img class="logo" src="./../../static/images/logo.png"/> -->
+                <span class="logo-title">纵繁数据科技有限公司</span>
+                <div class="form-box-r">
+                    <div class="left-lg"></div>
+                    <form class="right-form">
+                        <input name="username"  type="text" class="form-control" placeholder="用户名" />
+                        <input name="password" type="password" class="form-control" placeholder="密码" />
+                        <input name="question" type="text" class="form-control" placeholder="设置问题" />
+                        <input name="answer" type="text" class="form-control" placeholder="答案" />
+                        <input name="email" type="text" class="form-control" placeholder="邮箱" />
+                        <input name="phone" type="text" class="form-control" placeholder="电话" />
+                        <!-- <div class="validate-box" style="border:0px solid #ddd;">
+                            <input  placeholder="验证码"/>
+                            <img  onclick="refresh()"/>
+                        </div> -->
+                        <input  value="注册" class="submit-login mg-top" onclick="prepareForAjx()"/>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="inputBox">
+            <span>姓名：</span>
+            <input class=""/>
+            <span>联系方式：</span>
+            <input class=""/>
+            <span class="submitBtn">提交</span>
+        </div> -->
+        <!-- <div class="footer">
+            <div class="info-box">
+                <div class="left-box">
+                    <div class="info">Copyright&nbsp;&nbsp;<i class="fa fa-copyright" style="font-size:1.4rem;color:white;"></i>&nbsp;xxxx科技有限股份公司</div>
+                    <div class="info">地址：北京市昌平区龙博苑三区</div>
+                    <div class="info">联系电话:13345334567</div>
+                    <div class="info">QQ:232323232</div>
+                    <div class="info">微信号:232323232</div>
+                    <div class="info">邮箱：78372847@qq.com</div> 
+                </div>
+                <div class="right-box">
+                    <img class="public-acount" src="image/public_img.png"/>
+                    <div class="img-title">xxx公众号</div>
+                </div>
+            </div>
+        </div> -->
+        <script src="js/lib/jquery-2.1.3.min.js"></script>
+    </body>
+    <script>
+        $(function(){
+        });
+        function prepareForAjx(){
+            var url = "http://localhost:8088/user/register.do";
+            var data = {};
+            data["username"] = $('input[name="username"]').val();
+            data["password"] = $('input[name="password"]').val();
+            data["question"] = $('input[name="question"]').val();
+            data["answer"] = $('input[name="answer"]').val();
+            data["email"] = $('input[name="email"]').val();
+            data["phone"] = $('input[name="phone"]').val();
+            data["role"] = 0;
+            doAjax(url,data);
+        }
+        function doAjax(url,data){
+            $.ajax({
+                url : url,
+                type : "post",
+                dataType : "json",
+                data : data,
+                async : false,
+                success : function(data) {
+                    if(data.status == 0){
+                        alert(data.msg);
+                        window.location.href="./login.html";
+                    }else{
+                        alert(data.msg);
+                    }
+                },
+                error : function(XMLHttpRequest, textStatus, errorThrown) {
+                    
+                }
+            });
+        }
+    </script>
+</html>
