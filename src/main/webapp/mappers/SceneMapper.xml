@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mmall.dao.SceneMapper">
+    <resultMap id="BaseResultMap" type="com.mmall.pojo.Scene">
+
+        <constructor>
+            <idArg column="id" javaType="java.lang.Integer" jdbcType="INTEGER" />
+            <arg column="scene_name" javaType="java.lang.String" jdbcType="VARCHAR" />
+            <arg column="scene_desc" javaType="java.lang.String" jdbcType="VARCHAR" />
+            <arg column="thumb_img" javaType="java.lang.String" jdbcType="VARCHAR" />
+            <arg column="title" javaType="java.lang.String" jdbcType="VARCHAR" />
+            <arg column="about_products_id" javaType="java.lang.String" jdbcType="VARCHAR" />
+            <arg column="sub_title" javaType="java.lang.String" jdbcType="VARCHAR" />
+            <arg column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+            <arg column="update_time" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">id, scene_name,scene_desc, thumb_img, title, about_products_id,sub_title, create_time, update_time
+    </sql>
+    <select id="findAllScenes"  resultMap="BaseResultMap">
+        select
+       <include refid="Base_Column_List"></include>
+        from mmall_scene
+    </select>
+    <insert id="add_scene" parameterType="com.mmall.pojo.Scene">
+        insert INTO mmall_scene
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="scene_name != null">
+                scene_name,
+            </if>
+            <if test="scene_desc != null">
+                scene_desc,
+            </if>
+            <if test="thumb_img != null">
+                thumb_img,
+            </if>
+            <if test="title != null">
+                title,
+            </if>
+            <if test="about_products_id != null">
+                about_products_id,
+            </if>
+            <if test="sub_title != null">
+                sub_title,
+            </if>
+                create_time,
+            <if test="update_time != null">
+                    update_time,
+            </if>
+        </trim>
+        <trim prefix="values(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="scene_name != null">
+                #{scene_name,jdbcType=VARCHAR},
+            </if>
+            <if test="scene_desc != null">
+                #{scene_desc,jdbcType=VARCHAR},
+            </if>
+            <if test="thumb_img != null">
+                #{thumb_img,jdbcType=VARCHAR},
+            </if>
+            <if test="title != null">
+                #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="sub_title != null">
+                #{sub_title,jdbcType=VARCHAR},
+            </if>
+            <if test="about_products_id != null">
+                #{about_products_id,jdbcType=INTEGER},
+            </if>
+            now(),
+            <if test="update_time != null">
+                now(),
+            </if>
+        </trim>
+    </insert>
+    <delete id="delete_scene" parameterType="int">
+        delete from mmall_scene where id in
+        <foreach item="sceneItem" collection="array" open="(" separator="," close=")">
+            #{sceneItem}
+        </foreach>
+    </delete>
+    <select id="getSceneDetailsById" parameterType="int" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM  mmall_scene
+        WHERE id = #{sceneId,jdbcType=INTEGER}
+    </select>
+    <update id="update_scene" parameterType="com.mmall.pojo.Scene">
+        update mmall_scene
+        <set>
+            <if test="id != null">
+                id = #{id,jdbcType=INTEGER},
+            </if>
+            <if test="scene_name != null">
+                scene_name = #{scene_name,jdbcType=VARCHAR},
+            </if>
+            <if test="scene_desc != null">
+                scene_desc = #{scene_desc,jdbcType=VARCHAR},
+            </if>
+            <if test="title != null">
+                title = #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="thumb_img != null">
+                thumb_img = #{thumb_img,jdbcType=VARCHAR},
+            </if>
+            update_time =  now(),
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+</mapper>

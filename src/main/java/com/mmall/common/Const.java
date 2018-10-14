@@ -21,7 +21,10 @@ public class Const {
      */
     public static final String SESSION_KEY_OF_RAND_CODE = "randCode";
 
-
+    public interface RedisCacheExtime{
+        int REDIS_SESSION_EXTIME = 60 * 30;//设置登陆的session有效期为30分钟
+        int REDIS_RAND_CODE_EXTIME = 60 * 1;//设置验证码的有效期
+    }
     public interface ProductListOrderBy{
         Set<String> PRICE_ASC_DESC =Sets.newHashSet("price_asc","price_desc");
    }
