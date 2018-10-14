@@ -9,6 +9,9 @@ import com.mmall.common.ResponseCode;
 import com.mmall.common.ServerResponse;
 import com.mmall.pojo.User;
 import com.mmall.service.IOrderService;
+import com.mmall.util.CookieUtil;
+import com.mmall.util.JedisPoolUtil;
+import com.mmall.util.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +38,13 @@ public class OrderController {
     //查询订单列表
     @RequestMapping(value="list.do",method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse list(HttpSession session, @RequestParam(value="pageNum",defaultValue = "1")int pageNum,@RequestParam(value="pageSize",defaultValue = "10")int pageSize){
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ServerResponse list(HttpServletRequest request, @RequestParam(value="pageNum",defaultValue = "1")int pageNum,@RequestParam(value="pageSize",defaultValue = "10")int pageSize){
+        String token = CookieUtil.readLoginToken(request);
+        if(org.apache.commons.lang.StringUtils.isEmpty(token)){
+            return ServerResponse.createByErrorMessage("用户未登录，无法获取当前用户信息");
+        }
+        String userStr = JedisPoolUtil.get(token);
+        User user = JsonUtil.string2Obj(userStr,User.class);
         if(user == null){
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -46,8 +54,13 @@ public class OrderController {
     //创建订单
     @RequestMapping(value="create.do",method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse create(HttpSession session,Integer shippingId){
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ServerResponse create(HttpServletRequest request,Integer shippingId){
+        String token = CookieUtil.readLoginToken(request);
+        if(org.apache.commons.lang.StringUtils.isEmpty(token)){
+            return ServerResponse.createByErrorMessage("用户未登录，无法获取当前用户信息");
+        }
+        String userStr = JedisPoolUtil.get(token);
+        User user = JsonUtil.string2Obj(userStr,User.class);
         if(user == null){
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -57,8 +70,13 @@ public class OrderController {
     //取消订单
     @RequestMapping(value="cancel.do",method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse create(HttpSession session,Long orderNo){
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ServerResponse create(HttpServletRequest request,Long orderNo){
+        String token = CookieUtil.readLoginToken(request);
+        if(org.apache.commons.lang.StringUtils.isEmpty(token)){
+            return ServerResponse.createByErrorMessage("用户未登录，无法获取当前用户信息");
+        }
+        String userStr = JedisPoolUtil.get(token);
+        User user = JsonUtil.string2Obj(userStr,User.class);
         if(user == null){
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -68,8 +86,13 @@ public class OrderController {
     //查看购物车详情
     @RequestMapping(value="get_order_cart_product.do",method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse getOrderCartProduct(HttpSession session){
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ServerResponse getOrderCartProduct(HttpServletRequest request){
+        String token = CookieUtil.readLoginToken(request);
+        if(org.apache.commons.lang.StringUtils.isEmpty(token)){
+            return ServerResponse.createByErrorMessage("用户未登录，无法获取当前用户信息");
+        }
+        String userStr = JedisPoolUtil.get(token);
+        User user = JsonUtil.string2Obj(userStr,User.class);
         if(user == null){
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -79,8 +102,13 @@ public class OrderController {
     //查看订单详情
     @RequestMapping(value="details.do",method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse details(HttpSession session,Long orderNo){
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ServerResponse details(HttpServletRequest request,Long orderNo){
+        String token = CookieUtil.readLoginToken(request);
+        if(org.apache.commons.lang.StringUtils.isEmpty(token)){
+            return ServerResponse.createByErrorMessage("用户未登录，无法获取当前用户信息");
+        }
+        String userStr = JedisPoolUtil.get(token);
+        User user = JsonUtil.string2Obj(userStr,User.class);
         if(user == null){
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -89,8 +117,13 @@ public class OrderController {
 
     @RequestMapping(value="pay.do",method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse pay(HttpSession session,HttpServletRequest request,Long orderNo){
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ServerResponse pay(HttpServletRequest request,Long orderNo){
+        String token = CookieUtil.readLoginToken(request);
+        if(org.apache.commons.lang.StringUtils.isEmpty(token)){
+            return ServerResponse.createByErrorMessage("用户未登录，无法获取当前用户信息");
+        }
+        String userStr = JedisPoolUtil.get(token);
+        User user = JsonUtil.string2Obj(userStr,User.class);
         if(user == null){
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
         }
@@ -134,8 +167,13 @@ public class OrderController {
 
     @RequestMapping("get_order_pay_status.do")
     @ResponseBody
-    public ServerResponse<Boolean> getOrderPayStatus(HttpSession session,Long orderNo){
-        User user = (User) session.getAttribute(Const.CURRENT_USER);
+    public ServerResponse<Boolean> getOrderPayStatus(HttpServletRequest request,Long orderNo){
+        String token = CookieUtil.readLoginToken(request);
+        if(org.apache.commons.lang.StringUtils.isEmpty(token)){
+            return ServerResponse.createByErrorMessage("用户未登录，无法获取当前用户信息");
+        }
+        String userStr = JedisPoolUtil.get(token);
+        User user = JsonUtil.string2Obj(userStr,User.class);
         if(user == null){
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),ResponseCode.NEED_LOGIN.getDesc());
         }
