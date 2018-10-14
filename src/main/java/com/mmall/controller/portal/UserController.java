@@ -9,6 +9,7 @@ import com.mmall.service.IUserService;
 import com.mmall.util.CookieUtil;
 import com.mmall.util.JedisPoolUtil;
 import com.mmall.util.JsonUtil;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,7 +37,7 @@ public class UserController {
     private IUserService iUserService;
     @RequestMapping(value="login.do",method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse<User> login(String code, String username, String password, HttpSession session, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse){
+    public ServerResponse<User> login(String code, String username, String password, HttpSession session, HttpServletResponse httpServletResponse){
         ServerResponse<User> response = iUserService.login(username,password);
         if(response.isSuccess()){
 
@@ -55,8 +56,11 @@ public class UserController {
     }
     @RequestMapping(value="loginOut.do",method = RequestMethod.GET)
     @ResponseBody
-    public ServerResponse<String> loginOut(HttpSession session){
-        session.removeAttribute(Const.CURRENT_USER);
+    public ServerResponse<String> loginOut(HttpServletRequest request,HttpServletResponse response){
+//        session.removeAttribute(Const.CURRENT_USER);
+        String token = CookieUtil.readLoginToken(request);
+        CookieUtil.delLoginToken(request,response);
+        JedisPoolUtil.del(token);
         return ServerResponse.createBySuccess();
     }
     @RequestMapping(value="register.do",method = RequestMethod.POST)
@@ -75,6 +79,9 @@ public class UserController {
     public ServerResponse<User> getUserInfo(HttpServletRequest request){
 //        User user = (User)session.getAttribute(Const.CURRENT_USER);
         String token = CookieUtil.readLoginToken(request);
+        if(StringUtils.isEmpty(token)){
+            return ServerResponse.createByErrorMessage("用户未登录，无法获取当前用户信息");
+        }
         String userStr = JedisPoolUtil.get(token);
         User user = JsonUtil.string2Obj(userStr,User.class);
         if(user != null){
