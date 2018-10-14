@@ -26,7 +26,15 @@
     <url-pattern>/*</url-pattern>
   </filter-mapping>
 
-
+<!--二期新增filter,用于session有效期的重置-->
+  <filter>
+    <filter-name>sessionExpireFilter</filter-name>
+    <filter-class>com.mmall.controller.common.SessionExpireFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>sessionExpireFilter</filter-name>
+    <url-pattern>*.do</url-pattern>
+  </filter-mapping>
   <!--监听web容器的启动和关闭-->
   <listener>
     <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
