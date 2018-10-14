@@ -90,30 +90,30 @@ public class UserServiceImpl implements IUserService {
         if(count > 0){
             String forgetToken = UUID.randomUUID().toString();
             JedisPoolUtil.setEx(Const.TOKEN_PREFIX + username,forgetToken,60*60*12);
-            ServerResponse.createBySuccess(forgetToken);
+            return ServerResponse.createBySuccess(forgetToken);
         }
         return ServerResponse.createByErrorMessage("问题的答案错误");
     }
     public ServerResponse<String> forgetResetPassword(String username,String passwordNew,String forgetToken){
         if(org.apache.commons.lang3.StringUtils.isNotBlank(forgetToken)){
-            ServerResponse.createByErrorMessage("参数错误，token需要传递！");
+            return ServerResponse.createByErrorMessage("参数错误，token需要传递！");
         }
         ServerResponse validResponse = this.checkValid(username,Const.CURRENT_USER);
         if(validResponse.isSuccess()){
-            ServerResponse.createByErrorMessage("该用户不存在！");
+            return ServerResponse.createByErrorMessage("该用户不存在！");
         }
         String token = JedisPoolUtil.get(Const.TOKEN_PREFIX + username);
         if(org.apache.commons.lang3.StringUtils.isNotBlank(token)){
-            ServerResponse.createByErrorMessage("token无效或过期！");
+            return ServerResponse.createByErrorMessage("token无效或过期！");
         }
         if(org.apache.commons.lang3.StringUtils.equals(token,forgetToken)){
             String md5Password =  MD5Util.MD5EncodeUtf8(passwordNew);
             int count = userMapper.updatePasswordByUsername(username,md5Password);
             if(count > 0){
-                ServerResponse.createBySuccess("重置密码成功！");
+                return ServerResponse.createBySuccess("重置密码成功！");
             }
         }else{
-            ServerResponse.createByErrorMessage("token不一致，请重新获取token!");
+            return ServerResponse.createByErrorMessage("token不一致，请重新获取token!");
         }
         return ServerResponse.createByErrorMessage("修改密码失败！");
     }
@@ -134,7 +134,7 @@ public class UserServiceImpl implements IUserService {
     public ServerResponse<User> updateInformation(User user){
         int resultCount = userMapper.checkEmailByUserId(user.getId(),user.getEmail());
         if(resultCount > 0){
-            ServerResponse.createByErrorMessage("该邮箱已经存在，请更换邮箱！");
+            return ServerResponse.createByErrorMessage("该邮箱已经存在，请更换邮箱！");
         }
         User updateUser = new User();
         updateUser.setId(user.getId());
@@ -151,7 +151,7 @@ public class UserServiceImpl implements IUserService {
     public ServerResponse<User> getInformation(Integer userId){
        User user = userMapper.selectByPrimaryKey(userId);
         if(user == null){
-            ServerResponse.createByErrorMessage("找不到当前用户");
+            return ServerResponse.createByErrorMessage("找不到当前用户");
         }
         user.setPassword(StringUtils.EMPTY);
         return ServerResponse.createBySuccess(user);
