@@ -6,6 +6,7 @@ import com.mmall.pojo.User;
 import com.mmall.util.CookieUtil;
 import com.mmall.util.JedisPoolUtil;
 import com.mmall.util.JsonUtil;
+import com.mmall.util.ShardedJedisPoolUtil;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.*;
@@ -24,10 +25,10 @@ public class SessionExpireFilter implements Filter {
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
         String token = CookieUtil.readLoginToken(httpServletRequest);
         if(StringUtils.isNotEmpty(token)){
-            String userJsonStr = JedisPoolUtil.get(token);
+            String userJsonStr = ShardedJedisPoolUtil.get(token);
             User user = JsonUtil.string2Obj(userJsonStr,User.class);
             if(user != null){
-                JedisPoolUtil.expire(token, Const.RedisCacheExtime.REDIS_SESSION_EXTIME);
+                ShardedJedisPoolUtil.expire(token, Const.RedisCacheExtime.REDIS_SESSION_EXTIME);
             }
         }
         filterChain.doFilter(servletRequest,servletResponse);

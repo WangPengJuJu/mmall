@@ -9,6 +9,7 @@ import com.mmall.service.IUserService;
 import com.mmall.util.CookieUtil;
 import com.mmall.util.JedisPoolUtil;
 import com.mmall.util.JsonUtil;
+import com.mmall.util.ShardedJedisPoolUtil;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -50,7 +51,7 @@ public class UserController {
             CookieUtil.writeLoginToken(httpServletResponse,session.getId());
 //            CookieUtil.readLoginToken(httpServletRequest);
 //            CookieUtil.delLoginToken(httpServletRequest,httpServletResponse);
-            JedisPoolUtil.setEx(session.getId(), JsonUtil.obj2String(response.getData()),Const.RedisCacheExtime.REDIS_SESSION_EXTIME);
+            ShardedJedisPoolUtil.setEx(session.getId(), JsonUtil.obj2String(response.getData()),Const.RedisCacheExtime.REDIS_SESSION_EXTIME);
         }
         return response;
     }
@@ -60,7 +61,7 @@ public class UserController {
 //        session.removeAttribute(Const.CURRENT_USER);
         String token = CookieUtil.readLoginToken(request);
         CookieUtil.delLoginToken(request,response);
-        JedisPoolUtil.del(token);
+        ShardedJedisPoolUtil.del(token);
         return ServerResponse.createBySuccess();
     }
     @RequestMapping(value="register.do",method = RequestMethod.POST)
@@ -82,7 +83,7 @@ public class UserController {
         if(StringUtils.isEmpty(token)){
             return ServerResponse.createByErrorMessage("用户未登录，无法获取当前用户信息");
         }
-        String userStr = JedisPoolUtil.get(token);
+        String userStr = ShardedJedisPoolUtil.get(token);
         User user = JsonUtil.string2Obj(userStr,User.class);
         if(user != null){
             System.out.print("______________________________________________");
@@ -114,7 +115,7 @@ public class UserController {
         if(StringUtils.isEmpty(token)){
             return ServerResponse.createByErrorMessage("用户未登录，无法获取当前用户信息");
         }
-        String userStr = JedisPoolUtil.get(token);
+        String userStr = ShardedJedisPoolUtil.get(token);
         User user = JsonUtil.string2Obj(userStr,User.class);
         if(user == null){
             return ServerResponse.createByErrorMessage("用户未登录");
@@ -128,7 +129,7 @@ public class UserController {
         if(StringUtils.isEmpty(token)){
             return ServerResponse.createByErrorMessage("用户未登录，无法获取当前用户信息");
         }
-        String userStr = JedisPoolUtil.get(token);
+        String userStr = ShardedJedisPoolUtil.get(token);
         User currentUser = JsonUtil.string2Obj(userStr,User.class);
         if(currentUser == null){
             return ServerResponse.createByErrorMessage("用户未登录");
@@ -137,7 +138,7 @@ public class UserController {
         user.setUsername(currentUser.getUsername());
         ServerResponse response =  iUserService.updateInformation(user);
         if(response.isSuccess()){
-            JedisPoolUtil.setEx(token, JsonUtil.obj2String(response.getData()),Const.RedisCacheExtime.REDIS_SESSION_EXTIME);
+            ShardedJedisPoolUtil.setEx(token, JsonUtil.obj2String(response.getData()),Const.RedisCacheExtime.REDIS_SESSION_EXTIME);
         }
         return response;
     }
@@ -148,7 +149,7 @@ public class UserController {
         if(StringUtils.isEmpty(token)){
             return ServerResponse.createByErrorMessage("用户未登录，无法获取当前用户信息");
         }
-        String userStr = JedisPoolUtil.get(token);
+        String userStr = ShardedJedisPoolUtil.get(token);
         User currentUser = JsonUtil.string2Obj(userStr,User.class);
         if(currentUser == null){
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(),"未登陆需要强制登陆，status=10");
